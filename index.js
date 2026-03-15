@@ -66,6 +66,58 @@ app.post('/students', (req, res) => {
   });
 });
 
+// 4. Endpoint PUT (Update)
+app.put('/students/:id', (req, res) => {
+  const studentId = parseInt(req.params.id);
+  const { name, major, university } = req.body;
+
+  const studentIndex = students.findIndex(s => s.id === studentId);
+
+  if (studentIndex === -1) {
+    return res.status(404).json({
+      message: 'Mahasiswa tidak ditemukan'
+    });
+  }
+
+  if (!name || !major || !university) {
+    return res.status(400).json({
+      message: 'Nama, jurusan, dan universitas harus diisi!'
+    });
+  }
+
+  students[studentIndex] = {
+    id: studentId,
+    name,
+    major,
+    university
+  };
+
+  res.status(200).json({
+    message: 'Data mahasiswa berhasil diupdate',
+    data: students[studentIndex]
+  });
+});
+
+// 5. Endpoint DELETE
+app.delete('/students/:id', (req, res) => {
+  const studentId = parseInt(req.params.id);
+
+  const studentIndex = students.findIndex(s => s.id === studentId);
+
+  if (studentIndex === -1) {
+    return res.status(404).json({
+      message: 'Mahasiswa tidak ditemukan'
+    });
+  }
+
+  const deletedStudent = students.splice(studentIndex, 1);
+
+  res.status(200).json({
+    message: 'Data mahasiswa berhasil dihapus',
+    data: deletedStudent[0]
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server REST API Integrasi Sistem lagi jalan-jalan di http://localhost:${port}`);
 });
